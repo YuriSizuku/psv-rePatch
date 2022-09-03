@@ -25,6 +25,13 @@ Special thanks to:
 #define rePatchFolder "rePatch"
 #define addcontFolder "reAddcont"
 
+extern int module_get_export_func(SceUID pid,
+	const char * 	modname,
+	uint32_t 	libnid,
+	uint32_t 	funcnid,
+	uintptr_t * 	func 
+);
+
 //https://wiki.henkaku.xyz/vita/SceIofilemgr
 typedef struct io_scheduler_item //size is 0x14 - allocated from SceIoScheduler heap
 {
@@ -60,23 +67,23 @@ typedef struct mount_point_overlay{
 #define MANU_PATH  0x08
 #define APP_PATH  0x10
 
-typedef struct SceSelfAuthInfo // size is 0x90
-{
-	SceUInt64 program_authority_id;
-	SceUInt64 padding1;
-	uint8_t capability[0x20];
-	uint8_t attribute[0x20];
-	uint8_t padding2[0x10];
-	uint8_t klicensee[0x10]; // offset 0x60
-	uint32_t unk_70;
-	uint32_t unk_74;
-	uint32_t unk_78;
-	uint32_t unk_7C;
-	uint32_t unk_80;
-	uint32_t unk_84;
-	uint32_t unk_88;
-	uint32_t unk_8C;
-} SceSelfAuthInfo;
+// typedef struct SceSelfAuthInfo // size is 0x90
+// {
+// 	SceUInt64 program_authority_id;
+// 	SceUInt64 padding1;
+// 	uint8_t capability[0x20];
+// 	uint8_t attribute[0x20];
+// 	uint8_t padding2[0x10];
+// 	uint8_t klicensee[0x10]; // offset 0x60
+// 	uint32_t unk_70;
+// 	uint32_t unk_74;
+// 	uint32_t unk_78;
+// 	uint32_t unk_7C;
+// 	uint32_t unk_80;
+// 	uint32_t unk_84;
+// 	uint32_t unk_88;
+// 	uint32_t unk_8C;
+// } SceSelfAuthInfo;
 
 typedef struct SceSblSmCommContext130 // size is 0x130 as its name indicates.
 {

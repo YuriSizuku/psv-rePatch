@@ -1,10 +1,11 @@
 /* 
-rePatch v3.0 reDux0 -- PATCHING WITH FREEDOM
+rePatch v3.0.1 reDux0 -- PATCHING WITH FREEDOM
 	Brought to you by SilicaTeam 2.0 --
 	
 		Dev and "reV ur engines" by @dots_tb @CelesteBlue123 (especially his """holy grail"""  and self_auth info)
 		
 	with support from @Nkekev @SilicaAndPina
+	game card eboot redirect problem fixed by @devseed
 
 Testing team:
 	AlternativeZero	bopz
@@ -140,7 +141,11 @@ static char eboot_path[PATH_MAX];
 static int ksceIoOpen_patched(const char *filename, int flag, SceIoMode mode) {
 	int ret = -1, state;
 	ENTER_SYSCALL(state);
-	if ((flag & SCE_O_WRONLY) != SCE_O_WRONLY && ksceSblACMgrIsShell(0) && (strncmp(filename, "ux0:", sizeof("ux0:") -1) == 0) && strstr(filename, "/eboot.bin") != NULL){
+	if ((flag & SCE_O_WRONLY) != SCE_O_WRONLY && ksceSblACMgrIsShell(0) && 
+		(strncmp(filename, "ux0:", sizeof("ux0:") -1) == 0 
+		|| strncmp(filename, "gro0:", sizeof("gro0:") -1) == 0 
+		|| strncmp(filename, "grw0:", sizeof("grw0:") -1) == 0) 
+		&& strstr(filename, "/eboot.bin") != NULL){
 			stripDevice(filename, eboot_path);
 			resolveFolder(eboot_path);
 			if((ret = TAI_CONTINUE(int, ref_hooks[1], eboot_path, flag, mode))>0) {
@@ -212,7 +217,7 @@ static int ksceAppMgrGameDataMount_patched(char *input, int r2, int r3, char *ou
 void _start() __attribute__ ((weak, alias ("module_start")));
 
 int module_start(SceSize argc, const void *args) {
-	module_get_export_func(KERNEL_PID, "SceFios2Kernel", TAI_ANY_LIBRARY, 0x23247EFB, &_sceFiosKernelOverlayRemoveForProcessForDriver);
+	module_get_export_func(KERNEL_PID, "SceFios2Kernel", TAI_ANY_LIBRARY, 0x23247EFB, (uintptr_t*)&_sceFiosKernelOverlayRemoveForProcessForDriver);
 	
 	hooks_uid[0] = taiHookFunctionExportForKernel(KERNEL_PID, &ref_hooks[0], "SceFios2Kernel", TAI_ANY_LIBRARY, 0x17E65A1C, sceFiosKernelOverlayAddForProcessForDriver_patched);
 	hooks_uid[1] = taiHookFunctionImportForKernel(KERNEL_PID, &ref_hooks[1], "SceKernelModulemgr", TAI_ANY_LIBRARY, 0x75192972, ksceIoOpen_patched);
@@ -227,15 +232,29 @@ int module_start(SceSize argc, const void *args) {
 	taiGetModuleInfoForKernel(KERNEL_PID, "SceIofilemgr", &tai_info);
 
 	switch(tai_info.module_nid) {
-		case 0xA96ACE9D://3.65
-		case 0x90DA33DE://3.68
-			hooks_uid[5] =  taiHookFunctionOffsetForKernel(KERNEL_PID, &ref_hooks[5], tai_info.modid, 0, 0xb3d8, 1,  io_item_thing_patched);
-			break;
+		case 0x7A1DBDE6://3.55
+		case 0xEF58597E://3.57
 		case 0x9642948C://3.60
 			hooks_uid[5] =  taiHookFunctionOffsetForKernel(KERNEL_PID, &ref_hooks[5], tai_info.modid, 0, 0xd400, 1, io_item_thing_patched);
 			break;
-		default:
+		case 0xE923F19C://3.61
+			hooks_uid[5] =  taiHookFunctionOffsetForKernel(KERNEL_PID, &ref_hooks[5], tai_info.modid, 0, 0xd414, 1, io_item_thing_patched);
+			break;
+		case 0x5FC2B87D://3.63
+		case 0xA96ACE9D://3.65
+		case 0x3347A95F://3.67
+		case 0x90DA33DE://3.68
 			hooks_uid[5] =  taiHookFunctionOffsetForKernel(KERNEL_PID, &ref_hooks[5], tai_info.modid, 0, 0xb3d8, 1,  io_item_thing_patched);
+			break;
+		case 0xF16E72C7://3.69
+		case 0x81A49C2B://3.70
+		case 0xF2D59083://3.71
+		case 0x9C16D40A://3.72
+		case 0xF7794A6C://3.73
+			hooks_uid[5] =  taiHookFunctionOffsetForKernel(KERNEL_PID, &ref_hooks[5], tai_info.modid, 0, 0xb830, 1,  io_item_thing_patched);
+			break;
+		default:
+			hooks_uid[5] =  taiHookFunctionOffsetForKernel(KERNEL_PID, &ref_hooks[5], tai_info.modid, 0, 0xb830, 1,  io_item_thing_patched);
 			break;
 	}
 	return SCE_KERNEL_START_SUCCESS;

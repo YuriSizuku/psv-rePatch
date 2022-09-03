@@ -2,7 +2,7 @@
 
 This plugin serves as a substitute for the patch folder when an existing update is present on official cartridges or other encrypted formats. It also has the benefit of loading decrypted content on 3.60+.
 
-**To clarify: this plugin works on 3.60-3.68 on NoNpDrm, official cartridges, and officially downloaded games.**
+**To clarify: this plugin works on 3.60-3.73 on NoNpDrm (as well as mai, vpk format), official cartridges, and officially downloaded games.**
 
 Note: Be wary of using a Vitamin dumped(or similar) eboot, it will be affected by save issues. 
 

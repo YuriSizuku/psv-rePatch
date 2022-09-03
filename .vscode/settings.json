@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "stdio.h": "c",
+        "unistd.h": "c",
+        "taihen.h": "c",
+        "vitasdkkern.h": "c",
+        "stdarg.h": "c",
+        "string.h": "c"
+    }
+}
